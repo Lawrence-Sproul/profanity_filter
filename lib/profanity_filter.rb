@@ -9,16 +9,16 @@ module ProfanityFilter
 
   module ClassMethods
     def profanity_filter!(*attr_names)
-      option = attr_names.pop[:method] if attr_names.last.is_a?(Hash)
-      attr_names.each { |attr_name| setup_callbacks_for(attr_name, option) }
+      options = attr_names.extract_options!
+      attr_names.each { |attr_name| setup_callbacks_for(attr_name, options[:method]) }
     end
 
     def profanity_filter(*attr_names)
-      option = attr_names.pop[:method] if attr_names.last.is_a?(Hash)
+      options = attr_names.extract_options!
 
       attr_names.each do |attr_name|
         instance_eval do
-          define_method "#{attr_name}_clean" do; ProfanityFilter::Base.clean(self[attr_name.to_sym], option); end
+          define_method "#{attr_name}_clean" do; ProfanityFilter::Base.clean(self[attr_name.to_sym], options[:method]); end
           define_method "#{attr_name}_original" do; self[attr_name]; end
           define_method "profanity_filtered_attrs" do; attr_names; end
           alias_method attr_name.to_sym, "#{attr_name}_clean".to_sym
