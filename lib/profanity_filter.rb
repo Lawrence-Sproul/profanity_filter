@@ -82,8 +82,8 @@ module ProfanityFilter
       def remove_from_dictionary( file )
         excluded_words = YAML.load_file( file )
         if excluded_words
-          dictionary.keep_if do |dictionary_word|
-            !( excluded_words.include?(dictionary_word) )
+          dictionary.reject! do |dictionary_word|
+            excluded_words.include? dictionary_word
           end
         end
       end
