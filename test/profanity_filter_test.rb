@@ -56,7 +56,18 @@ class BasicProfanityFilterTest < Test::Unit::TestCase
     assert ProfanityFilter::Base.profane?("h-e-l-l")
   end
   
-  
+  def test_knows_leet_speak_when_enabled
+    assert ProfanityFilter::Base.profane?('@ss', :leet => true)
+    assert ProfanityFilter::Base.profane?('b!tch', :leet => true)
+    assert ProfanityFilter::Base.profane?('cu|\/|', :leet => true)
+  end
+
+  def test_doesnt_know_leet_speak_when_not_enabled
+    assert !ProfanityFilter::Base.profane?('@ss')
+    assert !ProfanityFilter::Base.profane?('b!tch', :leet => false)
+    assert !ProfanityFilter::Base.profane?('cu|\/|')
+  end
+    
 end
 
 class DictionaryProfanityFilterTest < Test::Unit::TestCase

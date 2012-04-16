@@ -22,7 +22,10 @@ Non-Destructive (filters content when called, original text remains in the datab
 
   profanity_filter :foo, :bar
     #=> banned words will be replaced with @#=>$%
-
+    
+  profanity_filter :foo, :bar, :leet => true
+    #=> banned words will be tested against common "leet speak" variations of letters
+  
   profanity_filter :foo, :bar, :method => 'dictionary'
     #=> banned words will be replaced by value in config/dictionary.yml
 
@@ -60,8 +63,10 @@ Destructive (saves the filtered content to the database)
 
   ProfanityFilter::Base.clean(text)
   ProfanityFilter::Base.clean(text, 'dictionary')
-  ProfanityFilter::Base.clean(text, 'vowels')
   ProfanityFilter::Base.clean(text, 'hollow')
+  ProfanityFilter::Base.clean(text, :method => 'vowels', :leet => true)
+  ProfanityFilter::Base.clean(text, :leet => true)
+  
 
   ProfanityFilter::Base.profane?(text) #=> true/false
 
@@ -96,4 +101,5 @@ Created by Adam Bair (adam@intridea.com) of Intridea (http://www.intridea.com) i
 * Nola Stowe - added stars filter
 * Nick Wientge - removed dependency on ActiveRecord (now ORM agnostic)
 * Jean Regisser - lazily load the dictionary
+* Aaron Hurley - leet speak
 
