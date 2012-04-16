@@ -48,6 +48,15 @@ class BasicProfanityFilterTest < Test::Unit::TestCase
   def test_knows_nil_is_not_profane
     assert !ProfanityFilter::Base.profane?(nil)
   end
+  
+  def test_skips_whitelisted_words
+    assert !ProfanityFilter::Base.profane?("he'll")
+    assert ProfanityFilter::Base.profane?("hell")
+    assert ProfanityFilter::Base.profane?("h'e'l'l")
+    assert ProfanityFilter::Base.profane?("h-e-l-l")
+  end
+  
+  
 end
 
 class DictionaryProfanityFilterTest < Test::Unit::TestCase

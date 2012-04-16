@@ -66,9 +66,10 @@ module ProfanityFilter
   end
 
   class Base
-    cattr_accessor :replacement_text, :dictionary_file, :dictionary
+    cattr_accessor :replacement_text, :dictionary_file, :dictionary, :whitelist, :whitelist_file
     @@replacement_text = '@#$%'
     @@dictionary_file  = File.join(File.dirname(__FILE__), '../config/dictionary.yml')
+    @@whitelist_file = File.join(File.dirname(__FILE__), '../config/whitelist.yml')
 
     class << self
       def dictionary
@@ -77,6 +78,10 @@ module ProfanityFilter
       
       def append_dictionary( file )
         @@dictionary = dictionary.merge(YAML.load_file( file ) )
+      end
+      
+      def whitelist
+        @@whitelist ||= YAML.load_file(@@whitelist_file)
       end
       
       def remove_from_dictionary( file )
@@ -103,15 +108,17 @@ module ProfanityFilter
       end
 
       def clean_word(word)
-         return word unless(word.strip.size > 2)
+        if word.strip.size <= 2 or whitelist.include?(word.downcase)
+          return word
+        end
 
-         if word.index(/[\W]/)
-           word = word.split(/(\W)/).collect{ |subword| clean_word(subword) }.join
-           concat = word.gsub(/\W/, '')
-           word = concat if banned? concat
-         end
+        if word.index(/[\W]/)
+          word = word.split(/(\W)/).collect{ |subword| clean_word(subword) }.join
+          concat = word.gsub(/\W/, '')
+          word = concat if banned? concat
+        end
 
-         banned?(word) ? replacement(word) : word
+        banned?(word) ? replacement(word) : word
        end
 
        def replacement(word)
